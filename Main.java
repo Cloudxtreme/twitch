@@ -41,7 +41,7 @@ public class Main extends TimerTask implements LineListener {
     public void run() {
         URL channelURL = null;
         try {
-            channelURL = new URL("https://api.twitch.tv/kraken/channels/" + Main.channelName);
+            channelURL = new URL("https://api.twitch.tv/kraken/streams/" + Main.channelName);
         } catch (MalformedURLException mue) {
         }
         try {
@@ -56,14 +56,17 @@ public class Main extends TimerTask implements LineListener {
             scan.close();
             JSONObject obj = new JSONObject(data.toString());
             boolean isOnline = false;
+            JSONObject stream = null;
+            JSONObject channel = null;
             try {
-                String status = obj.getString("status");
+                stream = obj.getJSONObject("stream");
+                channel = stream.getJSONObject("channel");
                 isOnline = true;
             } catch (Exception e) {
                 isOnline = false;
             }
             if (isOnline) {
-                System.out.print(obj.getString("status") + "\n" + obj.getString("game") + "\n");
+                System.out.print(channel.getString("status") + "\n" + stream.getString("game") + "\n");
                 playSound("siren.wav");
             } else {
                 System.out.println("Channel is offline");
